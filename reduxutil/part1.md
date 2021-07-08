@@ -148,3 +148,45 @@ and our **e.target.value -> this.state.value.** Our state will change with respe
     console.log(data);
   }
 ```
+
+# Redux
+- `npm install redux react-redux react-thunk`
+- We want to bring in a provider (glue for react and redux). <br />
+`import { Provider } from 'react-redux';`
+- Wrap App.js in Provider JSX tags.
+```
+function App() {
+  return (
+    <Provider store={store}>
+      <div className="App">
+        <PostForm />
+        <hr />
+        <Posts />
+      </div>
+    </Provider>
+  );
+}
+```
+# **
+- Provider takes a store property, this store holds the state.
+
+- A store holds the whole state tree of your application, the only way to change the state inside it is to dispatch an action on it"
+- Store Methods - `getState(), dispatch(action), subscribe(listener)`
+- Use createStore to create a Redux store that holds the complete state tree of the app.
+- `createStore(reducer, [preloadingState], [enhancer])`
+. <br/>Other reducers will combine into the root 'reducer' and end up passed into the store. A reducing function returns the next state tree, given the current state tree and an action to handle. 
+# **
+
+# Creating store.js
+```
+import { createStore, applyMiddleware } from "redux";
+import thunk from 'react-thunk';
+
+const initialState = {};
+
+const middleware = [thunk];
+
+const store  = createStore(rootReducer, initialState, applyMiddleware(...middleware));
+
+export default store;
+```

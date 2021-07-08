@@ -1,3 +1,4 @@
 {
-   "sourceType" : "module"
+   "root": true,
+   "parser": "babel-eslint"
 }
