@@ -218,22 +218,39 @@ export default reducer;
 - ## We import these action types into our reducer script so that we can perform some action based on which action is triggered.
 - ## Notice how we default to returning state.
 # Each Action Creator is a function. (examine the actions folder)
+- Using fetch and .then() allows us to handle the promise without async/await keywords
 ```
-export const fetchPosts = () => async (dispatch) => {
-  try {
-    const { data } = await axios.get(
-      "https://jsonplaceholder.typicode.com/posts"
+// ES6 .then .catch
+export const fetchPosts = () => dispatch => {
+  fetch('https://jsonplaceholder.typicode.com/posts')
+    .then(res => res.json())
+    .then(posts =>
+      dispatch({
+        type: FETCH_POSTS,
+        payload: posts
+      })
     );
-    dispatch({
-      type: FETCH_POSTS,
-      posts: data,
-    });
-  } catch (err) {
-    console.log("Error in fetchingJson function");
-  }
 };
 ```
-## Thunk Middleware allows us to call the dispatch function directly to make asynchronous requests.
+```
+// ES7 async/await
+const gotPosts = posts => ({
+  type: FETCH_POSTS,
+  posts
+});
+export const fetchPosts = () => {
+  return async (dispatch) => {
+    try {
+      const { data } = await axios .get("https://jsonplaceholder.typicode.com/posts");
+      dispatch(gotPosts(data));
+    } catch (err) {
+      console.log("Error in fetchingJson function");
+    }
+  };
+}
+```
+### Note, In JavaScript, there are two main ways to handle asynchronous code: then/catch (ES6) and async/await (ES7). These syntaxes give us the same underlying functionality, but they affect readability and scope in different ways. 
+## Thunk Middleware allows us to call the dispatch function directly to make asynchronous requests. **The return value IS the thunk.**
 - ## **Think of dispatch as a way of sending data**
 - ## Notice how we no longer have to use setState, that sets component state. We can instead dispatch the data to the reducer.
 - ## We have condensed our function to use arrows, etc. After creating the action creator, we can remove our constructor and componentWillMount from our Posts.js .
@@ -270,3 +287,85 @@ class Posts extends Component {
 export default connect(null, { fetchPosts })(Posts)
 
 ```
+## When an action is called, dispatch should send the object to the reducer.
+# Now we need to get new items from the state.
+- ## Use mapStateToProps.
+```
+const mapStateToProps = (state) => ({
+  posts: state.posts.items,
+});
+```
+## The mapStateToProps func is in the Posts.js file, the reason why we call on posts is because that property is found on the root reducer. The reason we call on items is because that it what we want from our postReducer.. items: action.posts
+## This creates a this.props.posts.
+```
+export default combineReducers({
+    posts: postReducer
+})
+```
+
+
+# Nuance
+```
+    case FETCH_POSTS:
+      return {
+          ...state,
+          items: action.posts
+      }
+```
+- Returning a new state with the items that have been fetched.
+<hr />
+
+```
+const initialState = {
+  items: [],
+  item: {},
+};
+
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    case FETCH_POSTS:
+      return {
+          ...state,
+          items: action.posts
+      }
+    case NEW_POSTS:
+      break;
+    default:
+      return state;
+  }
+};
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Look at the Diagram in the Redux Crash Course notes in notebook.
+- ## Our UI triggers an action, on componentMount, we go invoke postActions for our action creator.
+- ## Our action creator will return a thunks function that dispatches the action with an action type and relavent data for the reducer.
+- ## Notice in Posts.js, we connected our component to the store. 
+- ## Our reducer is a pure function that specifies how the state should change in response to our action.
+- ## The reducer creates a new state (without modifying the original) by using spread syntax. Data is modified to respond to our action. New state is returned.
+- ## In our root reducer, we see that this reducer function is given as a value to posts.
+- ## When we mapToState in Posts.js, we change the posts state and reflect the changed data.
+- ## This new state is reflected by the UI.
