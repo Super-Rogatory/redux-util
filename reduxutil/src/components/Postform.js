@@ -1,5 +1,7 @@
-import axios from "axios";
 import React, { Component } from "react";
+import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
+import { createPost } from '../actions/postActions';
 
 class PostForm extends Component {
   constructor(props) {
@@ -20,18 +22,9 @@ class PostForm extends Component {
     event.preventDefault();
     const post = {
       title: this.state.title,
-      body: this.state.body,
+      body: this.state.body
     };
-    const { data } = await axios.post(
-      "https://jsonplaceholder.typicode.com/posts",
-      post,
-      {
-        headers: {
-          "Content-type": "application/json",
-        },
-      }
-    );
-    console.log(data);
+    this.props.createPost(post);
   }
   render() {
     return (
@@ -65,4 +58,7 @@ class PostForm extends Component {
     );
   }
 }
-export default PostForm;
+PostForm.propTypes = {
+  createPost: PropTypes.func.isRequired,
+}
+export default connect(null, { createPost })(PostForm);

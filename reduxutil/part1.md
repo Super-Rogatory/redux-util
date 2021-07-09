@@ -336,30 +336,6 @@ const reducer = (state = initialState, action) => {
 };
 ```
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 # Look at the Diagram in the Redux Crash Course notes in notebook.
 - ## Our UI triggers an action, on componentMount, we go invoke postActions for our action creator.
 - ## Our action creator will return a thunks function that dispatches the action with an action type and relavent data for the reducer.
@@ -369,3 +345,15 @@ const reducer = (state = initialState, action) => {
 - ## In our root reducer, we see that this reducer function is given as a value to posts.
 - ## When we mapToState in Posts.js, we change the posts state and reflect the changed data.
 - ## This new state is reflected by the UI.
+
+# Redux DevTools - allows us to see Action, State, Diff, etc.
+```
+import { createStore, applyMiddleware, compose } from "redux";
+.
+.
+.
+const store = createStore(rootReducer, initialState, compose(applyMiddleware(...middleware), window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__()));
+
+export default store;
+```
+

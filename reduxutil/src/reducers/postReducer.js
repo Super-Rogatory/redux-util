@@ -13,7 +13,10 @@ const reducer = (state = initialState, action) => {
           items: action.posts
       }
     case NEW_POSTS:
-      break;
+      return {
+        ...state,
+        item: action.post
+      }
     default:
       return state;
   }
