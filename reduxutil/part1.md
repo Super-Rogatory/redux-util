@@ -357,3 +357,7 @@ const store = createStore(rootReducer, initialState, compose(applyMiddleware(...
 export default store;
 ```
 
+# Snippets
+- imp
+- rcc
+- frc
