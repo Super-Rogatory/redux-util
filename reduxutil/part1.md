@@ -190,3 +190,83 @@ const store  = createStore(rootReducer, initialState, applyMiddleware(...middlew
 
 export default store;
 ```
+
+# Creating Reducers (root reducer in index.js) & Action Types
+## We create a reducers folder filled with files we can bring into the store.
+```
+import { FETCH_POSTS, NEW_POSTS } from "../actions/types";
+
+const initialState = {
+  item: [],
+  item: {},
+};
+
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    case FETCH_POSTS:
+      break;
+    case NEW_POSTS:
+      break;
+    default:
+      return state;
+  }
+};
+export default reducer;
+
+```
+- ## We create an actions folder filled with files that we can bring into specific reducers. We will have a file that specifies action types and on that specify individual actions.
+- ## We import these action types into our reducer script so that we can perform some action based on which action is triggered.
+- ## Notice how we default to returning state.
+# Each Action Creator is a function. (examine the actions folder)
+```
+export const fetchPosts = () => async (dispatch) => {
+  try {
+    const { data } = await axios.get(
+      "https://jsonplaceholder.typicode.com/posts"
+    );
+    dispatch({
+      type: FETCH_POSTS,
+      posts: data,
+    });
+  } catch (err) {
+    console.log("Error in fetchingJson function");
+  }
+};
+```
+## Thunk Middleware allows us to call the dispatch function directly to make asynchronous requests.
+- ## **Think of dispatch as a way of sending data**
+- ## Notice how we no longer have to use setState, that sets component state. We can instead dispatch the data to the reducer.
+- ## We have condensed our function to use arrows, etc. After creating the action creator, we can remove our constructor and componentWillMount from our Posts.js .
+
+# Connect
+## Connect, 'connects' your components to the redux store that was provided by the '<'Provider' />' component.
+## Recall, the Provider component wraps the entire React App.
+# Mapping our State to our Properties.
+`export default connect(null, { fetchPosts })(Posts)`
+```
+import React, { Component } from "react";
+import { connect } from 'react-redux';
+import { fetchPosts } from '../actions/postActions';
+class Posts extends Component {
+  componentWillMount() {
+    this.props.fetchPosts();
+  }
+  render() {
+    const postItems = this.state.posts.map((post) => (
+      <div key={post.id}>
+        <h3>{post.title}</h3>
+        <p>{post.body}</p>
+      </div>
+    ));
+    return (
+      <div>
+        <h1>Posts</h1>
+        {postItems}
+      </div>
+    );
+  }
+}
+
+export default connect(null, { fetchPosts })(Posts)
+
+```

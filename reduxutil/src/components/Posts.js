@@ -1,26 +1,9 @@
 import React, { Component } from "react";
-import axios from "axios";
-
+import { connect } from 'react-redux';
+import { fetchPosts } from '../actions/postActions';
 class Posts extends Component {
-  constructor() {
-    super();
-    this.state = {
-      posts: [],
-    };
-    this.fetchingJson = this.fetchingJson.bind(this);
-  }
-  async fetchingJson() {
-    try {
-      const { data } = await axios.get(
-        "https://jsonplaceholder.typicode.com/posts"
-      );
-      this.setState({ posts: data });
-    } catch (err) {
-      console.log("Error in fetchingJson function");
-    }
-  }
-  async componentWillMount() {
-    await this.fetchingJson();
+  componentWillMount() {
+    this.props.fetchPosts();
   }
   render() {
     const postItems = this.state.posts.map((post) => (
@@ -37,5 +20,4 @@ class Posts extends Component {
     );
   }
 }
-
-export default Posts;
+export default connect(null, { fetchPosts })(Posts)
